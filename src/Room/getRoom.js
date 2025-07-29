@@ -33,4 +33,26 @@ RoomRouter.get("/:id", async (req, res) => {
   }
 });
 
+RoomRouter.patch("/book", async (req, res) => {
+  const { roomId, userEmail } = req.body;
+  try {
+    const roomCollection = await getCollection("rooms");
+    const updateResult = await roomCollection.updateOne(
+      { roomId: roomId },
+      { $set: { userEmail: userEmail, status: "unavailable" } }
+    );
+    if (updateResult.modifiedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "Room not found or already booked" });
+    }
+    console.log(`Room ${roomId} booked by ${userEmail}`);
+    res.status(200).json({ message: "Room booked successfully" });
+  } catch (error) {
+    console.error("Error booking room:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 export default RoomRouter;
