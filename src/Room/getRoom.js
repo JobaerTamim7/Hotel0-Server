@@ -39,7 +39,7 @@ RoomRouter.patch("/book", async (req, res) => {
     const roomCollection = await getCollection("rooms");
     const updateResult = await roomCollection.updateOne(
       { roomId: roomId },
-      { $set: { userEmail: userEmail, status: "unavailable" } }
+      { $set: { userEmail: userEmail, roomStatus: "unavailable" } }
     );
     if (updateResult.modifiedCount === 0) {
       return res
@@ -53,6 +53,5 @@ RoomRouter.patch("/book", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 export default RoomRouter;
