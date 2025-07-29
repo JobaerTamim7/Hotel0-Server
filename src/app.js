@@ -41,7 +41,20 @@ app.post("/reviews", async (req, res) => {
   }
 });
 
-
+app.get("/reviews/:roomId", async (req, res) => {
+  const roomId = req.params.roomId;
+  try {
+    const reviewsCollection = await getCollection("reviews");
+    const reviews = await reviewsCollection.find({ roomId: roomId }).toArray();
+    if (reviews.length === 0) {
+      return res.status(404).json({ error: "No reviews found for this room" });
+    }
+    res.status(200).json(reviews);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.use((req, res, next) => {
   console.log(`404 - Route not found: ${req.method} ${req.path}`);
