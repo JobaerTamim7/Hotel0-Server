@@ -70,4 +70,37 @@ RoomRouter.get("/my-rooms/:userEmail", async (req, res) => {
   }
 });
 
+RoomRouter.delete("/cancel-booking", async (req, res) => {
+  const { roomId, userEmail } = req.body;
+  try {
+    const roomCollection = await getCollection("rooms");
+    const room = await roomCollection.findOne({
+      roomId: roomId,
+      userEmail: userEmail,
+    });
+    if (!room) {
+      return res
+        .status(404)
+        .json({ error: "Room not found or not booked by this user" });
+    }
+    const updateResult = await roomCollection.updateOne(
+      {
+        roomId: roomId,
+        userEmail: userEmail,
+      },
+      {
+        $set: { userEmail: null, roomStatus: "available" },
+      }
+    );
+    if (updateResult.modifiedCount === 0) {
+      return res.status(500).json({ error: "Failed to cancel booking" });
+    }
+    console.log(`Booking for room ${roomId} cancelled by ${userEmail}`);
+    res.status(200).json({ message: "Booking cancelled successfully" });
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default RoomRouter;
