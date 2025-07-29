@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 
 config();
 
-const uri = process.env.DB_URI;
+const uri = process.env.DB_URL;
 const DBName = process.env.DB_NAME;
 
 let client = null;
@@ -19,7 +19,6 @@ const connectDB = async () => {
     });
     await client.connect();
   }
-
   return client.db(DBName);
 };
 
