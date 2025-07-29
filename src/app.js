@@ -12,12 +12,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use("/rooms", RoomRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to the Hotel Server API" });
 });
-
-app.use("/rooms", RoomRouter);
 
 app.use((req, res, next) => {
   console.log(`404 - Route not found: ${req.method} ${req.path}`);
